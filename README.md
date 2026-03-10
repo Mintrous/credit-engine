@@ -74,7 +74,7 @@ No diretório `frontend/`:
 
 ## 5. Rodar os testes (Backend e Frontend)
 
-### 5.1 Backend (NestJS + Jest)
+### 5.1 Backend
 
 Executar nos respectivos diretórios:
 
@@ -83,5 +83,5 @@ Executar nos respectivos diretórios:
 yarn test
 
 # Modo watch
-npm run test:watch
+yarn test:watch
 ```
