@@ -81,7 +81,7 @@ Executar nos respectivos diretórios:
 
 ```bash
 # Executar todos os testes
-npm test
+yarn test
 
 # Modo watch
 npm run test:watch
