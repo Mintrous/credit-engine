@@ -1,0 +1,80 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+input AnalyzeCreditInput {
+  age: Int!
+  city: String!
+  cpf: String!
+  monthlyIncome: Float!
+  name: String!
+}
+
+input AnalyzeLegalEntityCreditInput {
+  city: String!
+  cnpj: String!
+  companyName: String!
+  monthlyRevenue: Float!
+}
+
+"""Result of a credit analysis for natural person"""
+type CreditAnalysis {
+  age: Int!
+
+  """true if score >= 200 and age >= 18"""
+  approved: Boolean!
+  city: String!
+  cpf: String!
+  createdAt: String!
+  id: String!
+
+  """Max loan value (monthly income * 3) when approved"""
+  maxLoan: Float!
+  monthlyIncome: Float!
+  name: String!
+
+  """Calculated score (integer)"""
+  score: Int!
+
+  """Temperature in celsius obtained from OpenWeatherMap"""
+  temperature: Float!
+}
+
+"""Result of a credit analysis for legal entity"""
+type LegalEntityCreditAnalysis {
+  """true if score >= 200"""
+  approved: Boolean!
+  city: String!
+  cnpj: String!
+  companyName: String!
+  createdAt: String!
+  id: String!
+
+  """Max loan value (monthly revenue * 2) when approved"""
+  maxLoan: Float!
+  monthlyRevenue: Float!
+
+  """Calculated score (integer)"""
+  score: Int!
+
+  """Temperature in celsius obtained from OpenWeatherMap"""
+  temperature: Float!
+}
+
+type Mutation {
+  """
+  Analyzes a customer's (natural person) credit and returns the score and decision.
+  """
+  analyzeCredit(input: AnalyzeCreditInput!): CreditAnalysis!
+
+  """Analyzes a legal entity's credit and returns the score and decision."""
+  analyzeLegalEntityCredit(input: AnalyzeLegalEntityCreditInput!): LegalEntityCreditAnalysis!
+}
+
+type Query {
+  """Lists all credit analyses performed for a CNPJ (legal entity tax ID)."""
+  analysesByCnpj(cnpj: String!): [LegalEntityCreditAnalysis!]!
+
+  """Lists all credit analyses performed for a CPF (natural person tax ID)."""
+  analysesByCpf(cpf: String!): [CreditAnalysis!]!
+}
