@@ -1,5 +1,4 @@
-## Credit Engine — Monorepo
-
+## Credit Engine
 ## 1. Pré-requisitos
 
 - **Node.js \>= 18**
