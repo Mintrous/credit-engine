@@ -1,7 +1,7 @@
 ## Credit Engine
 ## 1. Pré-requisitos
 
-- **Node.js \>= 18**
+- **Node.js \>= 22**
 - **npm ou yarn**
 
 ## 2. Instalar dependências
