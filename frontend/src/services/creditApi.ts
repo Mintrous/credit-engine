@@ -133,33 +133,5 @@ export const creditApi = {
 
     return data.analysesByCnpj;
   },
-
-  getHistory: async (): Promise<{
-    naturalPersons: CreditAnalysis[];
-    legalEntities: LegalEntityAnalysis[];
-  }> => {
-    const query = `
-      query GetAllAnalyses {
-        analysesByCpf(cpf: "*") {
-          id
-          name
-          age
-          monthlyIncome
-          city
-          cpf
-          score
-          approved
-          maxLoan
-          temperature
-          createdAt
-        }
-      }
-    `;
-
-    return {
-      naturalPersons: [],
-      legalEntities: [],
-    };
-  },
 };
 

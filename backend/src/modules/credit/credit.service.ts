@@ -62,10 +62,6 @@ export class CreditService {
     return this.repository.findByCnpj(cnpj);
   }
 
-  getAllAnalyses(): Array<CreditAnalysis | LegalEntityCreditAnalysis> {
-    return this.repository.findAll();
-  }
-
   calculateScore(age: number, monthlyIncome: number, temperature: number): number {
     const ageComponent         = age * 0.5;
     const incomeComponent      = (monthlyIncome / 100) * 2;
