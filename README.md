@@ -73,8 +73,6 @@ No diretório `frontend/`:
 
 ## 5. Rodar os testes (Backend e Frontend)
 
-### 5.1 Backend
-
 Executar nos respectivos diretórios:
 
 ```bash
