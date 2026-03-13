@@ -1,11 +1,6 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-} from 'react';
+import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import type { Analysis, CreditAnalysis, CustomerType, LegalEntityAnalysis, PersistedCreditState } from '../types/credit';
+import { getJsonItem, removeItem as removeStorageItem, setJsonItem } from '../shared/storage/localStorage';
 
 interface CreditContextValue {
   state: PersistedCreditState | null;
@@ -22,33 +17,27 @@ const STORAGE_KEY = 'credit_engine_result';
 const HISTORY_STORAGE_KEY = 'credit_engine_history';
 
 function loadFromStorage(): PersistedCreditState | null {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as PersistedCreditState) : null;
-  } catch {
-    return null;
-  }
+  return getJsonItem<PersistedCreditState>(STORAGE_KEY) ?? null;
 }
 
 function saveToStorage(state: PersistedCreditState): void {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  setJsonItem(STORAGE_KEY, state);
 }
 
 function removeFromStorage(): void {
-  localStorage.removeItem(STORAGE_KEY);
+  removeStorageItem(STORAGE_KEY);
 }
 
 function loadHistoryFromStorage(): StoredHistory {
-  try {
-    const raw = localStorage.getItem(HISTORY_STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as StoredHistory) : { naturalPersons: [], legalEntities: [] };
-  } catch {
-    return { naturalPersons: [], legalEntities: [] };
-  }
+  return (
+    getJsonItem<StoredHistory>(HISTORY_STORAGE_KEY, {
+      fallback: { naturalPersons: [], legalEntities: [] },
+    }) ?? { naturalPersons: [], legalEntities: [] }
+  );
 }
 
 function saveHistoryToStorage(history: StoredHistory): void {
-  localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(history));
+  setJsonItem(HISTORY_STORAGE_KEY, history);
 }
 
 function addToHistory(analysis: Analysis, customerType: CustomerType): void {
@@ -76,7 +65,11 @@ export function CreditProvider({ children }: { children: React.ReactNode }) {
 
   const saveResult = useCallback(
     (analysis: Analysis, customerType: CustomerType) => {
-      const next: PersistedCreditState = { analysis, customerType };
+      const customerName =
+        customerType === 'natural_person'
+          ? (analysis as CreditAnalysis).name
+          : (analysis as LegalEntityAnalysis).companyName;
+      const next: PersistedCreditState = { analysis, customerType, customerName };
       saveToStorage(next);
       addToHistory(analysis, customerType);
       setState(next);

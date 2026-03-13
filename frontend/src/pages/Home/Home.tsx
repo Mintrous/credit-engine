@@ -1,10 +1,19 @@
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { PageLayout } from '../../components/PageLayout/PageLayout';
+import { ChoiceCard } from '../../components/ChoiceCard/ChoiceCard';
+import { useCreditContext } from '../../context/CreditContext';
 
 export function Home() {
   const navigate = useNavigate();
+  const { state } = useCreditContext();
+
+  useEffect(() => {
+    if (state) navigate('/result');
+  }, [state, navigate]);
 
   return (
-    <div className="page page--home">
+    <PageLayout className="page page--home">
       <div className="home-content">
         <header className="home-header">
           <div className="brand">
@@ -20,31 +29,25 @@ export function Home() {
         </header>
 
         <div className="choice-grid">
-          <button
-            className="choice-card"
+          <ChoiceCard
+            icon="👤"
+            title="Pessoa Física"
+            description="CPF · Renda mensal · Idade"
             onClick={() => navigate('/person')}
-            data-testid="btn-person"
-          >
-            <span className="choice-card__icon">👤</span>
-            <span className="choice-card__title">Pessoa Física</span>
-            <span className="choice-card__desc">CPF · Renda mensal · Idade</span>
-            <span className="choice-card__arrow">→</span>
-          </button>
-
-          <button
-            className="choice-card"
+            testId="btn-person"
+          />
+          <ChoiceCard
+            icon="🏢"
+            title="Pessoa Jurídica"
+            description="CNPJ · Faturamento mensal"
             onClick={() => navigate('/company')}
-            data-testid="btn-company"
-          >
-            <span className="choice-card__icon">🏢</span>
-            <span className="choice-card__title">Pessoa Jurídica</span>
-            <span className="choice-card__desc">CNPJ · Faturamento mensal</span>
-            <span className="choice-card__arrow">→</span>
-          </button>
+            testId="btn-company"
+          />
         </div>
 
         <footer className="home-footer">
           <button
+            type="button"
             className="history-link-btn"
             onClick={() => navigate('/history')}
             data-testid="btn-history"
@@ -53,6 +56,6 @@ export function Home() {
           </button>
         </footer>
       </div>
-    </div>
+    </PageLayout>
   );
 }

@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { CreditAnalysis, LegalEntityAnalysis } from '../../types/credit';
+import { getJsonItem } from '../../shared/storage/localStorage';
+import { PageLayout } from '../../components/PageLayout/PageLayout';
+import { HistoryItem } from '../../components/HistoryItem/HistoryItem';
+import { ErrorMessage } from '../../components/ErrorMessage/ErrorMessage';
 
 const HISTORY_STORAGE_KEY = 'credit_engine_history';
 
@@ -10,12 +14,11 @@ interface StoredHistory {
 }
 
 function loadHistoryFromStorage(): StoredHistory {
-  try {
-    const raw = localStorage.getItem(HISTORY_STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as StoredHistory) : { naturalPersons: [], legalEntities: [] };
-  } catch {
-    return { naturalPersons: [], legalEntities: [] };
-  }
+  return (
+    getJsonItem<StoredHistory>(HISTORY_STORAGE_KEY, {
+      fallback: { naturalPersons: [], legalEntities: [] },
+    }) ?? { naturalPersons: [], legalEntities: [] }
+  );
 }
 
 export function History() {
@@ -31,130 +34,90 @@ export function History() {
 
   if (loading) {
     return (
-      <div className="page">
-        <div className="history-page">
-          <header className="form-header">
-            <button className="back-btn" onClick={() => navigate('/result')}>
-              ← Voltar
-            </button>
-            <h1 className="form-title">Histórico de análises</h1>
-          </header>
-          <p className="history-loading">Carregando...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!history) {
-    return (
-      <div className="page">
-        <div className="history-page">
-          <header className="form-header">
-            <button className="back-btn" onClick={() => navigate('/result')}>
-              ← Voltar
-            </button>
-            <h1 className="form-title">Histórico de análises</h1>
-          </header>
-          <p className="api-error">Não foi possível carregar o histórico.</p>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="page">
-      <div className="history-page">
+      <PageLayout innerClassName="history-page">
         <header className="form-header">
           <button className="back-btn" onClick={() => navigate('/result')}>
             ← Voltar
           </button>
           <h1 className="form-title">Histórico de análises</h1>
         </header>
+        <p className="history-loading">Carregando...</p>
+      </PageLayout>
+    );
+  }
 
-        <section className="history-section" data-testid="persons-section">
-          <h2 className="history-section__title">
-            Pessoas Físicas
-            <span className="history-section__count">{history.naturalPersons.length}</span>
-          </h2>
+  if (!history) {
+    return (
+      <PageLayout innerClassName="history-page">
+        <header className="form-header">
+          <button className="back-btn" onClick={() => navigate('/result')}>
+            ← Voltar
+          </button>
+          <h1 className="form-title">Histórico de análises</h1>
+        </header>
+        <ErrorMessage>Não foi possível carregar o histórico.</ErrorMessage>
+      </PageLayout>
+    );
+  }
 
-          {history.naturalPersons.length === 0 ? (
-            <p className="history-empty">Nenhum registro encontrado.</p>
-          ) : (
-            <ul className="history-list">
-              {history.naturalPersons.map((item) => (
-                <li key={item.id} className="history-item">
-                  <div className="history-item__info">
-                    <strong>{item.name}</strong>
-                    <span className="history-item__meta">
-                      {item.city} · CPF {item.cpf}
-                    </span>
-                    <span className="history-item__score">Pontuação: {item.score}</span>
-                  </div>
-                  <div className="history-item__result">
-                    <span
-                      className={`status-badge ${
-                        item.approved ? 'status-badge--approved' : 'status-badge--denied'
-                      }`}
-                    >
-                      {item.approved ? 'Aprovado' : 'Negado'}
-                    </span>
-                    {item.approved && (
-                      <span className="history-item__amount">
-                        {item.maxLoan.toLocaleString('pt-BR', {
-                          style: 'currency',
-                          currency: 'BRL',
-                        })}
-                      </span>
-                    )}
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
+  return (
+    <PageLayout innerClassName="history-page">
+      <header className="form-header">
+        <button className="back-btn" onClick={() => navigate('/result')}>
+          ← Voltar
+        </button>
+        <h1 className="form-title">Histórico de análises</h1>
+      </header>
 
-        <section className="history-section" data-testid="companies-section">
-          <h2 className="history-section__title">
-            Pessoas Jurídicas
-            <span className="history-section__count">{history.legalEntities.length}</span>
-          </h2>
+      <section className="history-section" data-testid="persons-section">
+        <h2 className="history-section__title">
+          Pessoas Físicas
+          <span className="history-section__count">{history.naturalPersons.length}</span>
+        </h2>
 
-          {history.legalEntities.length === 0 ? (
-            <p className="history-empty">Nenhum registro encontrado.</p>
-          ) : (
-            <ul className="history-list">
-              {history.legalEntities.map((item) => (
-                <li key={item.id} className="history-item">
-                  <div className="history-item__info">
-                    <strong>{item.companyName}</strong>
-                    <span className="history-item__meta">
-                      {item.city} · CNPJ {item.cnpj}
-                    </span>
-                    <span className="history-item__score">Pontuação: {item.score}</span>
-                  </div>
-                  <div className="history-item__result">
-                    <span
-                      className={`status-badge ${
-                        item.approved ? 'status-badge--approved' : 'status-badge--denied'
-                      }`}
-                    >
-                      {item.approved ? 'Aprovado' : 'Negado'}
-                    </span>
-                    {item.approved && (
-                      <span className="history-item__amount">
-                        {item.maxLoan.toLocaleString('pt-BR', {
-                          style: 'currency',
-                          currency: 'BRL',
-                        })}
-                      </span>
-                    )}
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
-      </div>
-    </div>
+        {history.naturalPersons.length === 0 ? (
+          <p className="history-empty">Nenhum registro encontrado.</p>
+        ) : (
+          <ul className="history-list">
+            {history.naturalPersons.map((item) => (
+              <HistoryItem
+                key={item.id}
+                id={item.id}
+                name={item.name}
+                meta={`${item.city} · CPF ${item.cpf}`}
+                score={item.score}
+                approved={item.approved}
+                maxLoan={item.maxLoan}
+              />
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <section className="history-section" data-testid="companies-section">
+        <h2 className="history-section__title">
+          Pessoas Jurídicas
+          <span className="history-section__count">{history.legalEntities.length}</span>
+        </h2>
+
+        {history.legalEntities.length === 0 ? (
+          <p className="history-empty">Nenhum registro encontrado.</p>
+        ) : (
+          <ul className="history-list">
+            {history.legalEntities.map((item) => (
+              <HistoryItem
+                key={item.id}
+                id={item.id}
+                name={item.companyName}
+                meta={`${item.city} · CNPJ ${item.cnpj}`}
+                score={item.score}
+                approved={item.approved}
+                maxLoan={item.maxLoan}
+              />
+            ))}
+          </ul>
+        )}
+      </section>
+    </PageLayout>
   );
 }

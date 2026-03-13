@@ -18,17 +18,23 @@ export class WeatherService {
 
   async getTemperature(city: string): Promise<number> {
     const apiKey = this.config.get<string>('OPENWEATHER_API_KEY');
-    const url = `http://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${apiKey}`;
-
     try {
       const { data } = await firstValueFrom(
-        this.http.get<OpenWeatherResponse>(url),
+        this.http.get<OpenWeatherResponse>(
+          'http://api.openweathermap.org/data/2.5/weather',
+          {
+            params: {
+              q: city,
+              appid: apiKey,
+            },
+          },
+        ),
       );
-      // The API returns temperature in Kelvin by default; convert to Celsius.
+      // the default api return is Kelvin
       return data.main.temp - KELVIN_TO_CELSIUS;
     } catch {
       throw new BadGatewayException(
-        `Unable to fetch temperature for city "${city}". Check the city name and API key.`,
+        `Unable to fetch temperature for city "${city}". Check the city name.`,
       );
     }
   }
