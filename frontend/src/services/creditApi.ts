@@ -138,8 +138,6 @@ export const creditApi = {
     naturalPersons: CreditAnalysis[];
     legalEntities: LegalEntityAnalysis[];
   }> => {
-    // First, fetch all natural person analyses (this would need a query that returns recent ones)
-    // For now, we'll implement this as two separate calls
     const query = `
       query GetAllAnalyses {
         analysesByCpf(cpf: "*") {
@@ -158,8 +156,6 @@ export const creditApi = {
       }
     `;
 
-    // Since we don't have a "getAll" query, we'll need to handle this differently
-    // This is a limitation of the current backend - for now return empty arrays
     return {
       naturalPersons: [],
       legalEntities: [],
