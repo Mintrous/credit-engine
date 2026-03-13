@@ -1,8 +1,7 @@
-## Credit Engine — Monorepo
-
+## Credit Engine
 ## 1. Pré-requisitos
 
-- **Node.js \>= 18**
+- **Node.js \>= 22**
 - **npm ou yarn**
 
 ## 2. Instalar dependências
@@ -75,14 +74,14 @@ No diretório `frontend/`:
 
 ## 5. Rodar os testes (Backend e Frontend)
 
-### 5.1 Backend (NestJS + Jest)
+### 5.1 Backend
 
 Executar nos respectivos diretórios:
 
 ```bash
 # Executar todos os testes
-npm test
+yarn test
 
 # Modo watch
-npm run test:watch
+yarn test:watch
 ```
