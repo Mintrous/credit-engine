@@ -52,7 +52,6 @@ No diretório `frontend/`:
 
    ```bash
    cd frontend
-   npx msw init public/ --save
    ```
 
 2. **Configurar variáveis de ambiente**:
@@ -60,7 +59,7 @@ No diretório `frontend/`:
    No `.env`, defina:
 
    ```env
-   VITE_API_URL=http://localhost:3000
+   VITE_API_URL=http://localhost:3000/graphql
    ```
 
 3. **Rodar em modo desenvolvimento**:
